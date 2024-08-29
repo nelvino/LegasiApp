@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1081449010151",
+    "project_id": "legasiapp-fc062",
+    "storage_bucket": "legasiapp-fc062.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1081449010151:android:53c578d196297ce6c1e342",
+        "android_client_info": {
+          "package_name": "com.legasiapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5MIc7TGBfHybkAyWkVIyHAaAY7aLibMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
