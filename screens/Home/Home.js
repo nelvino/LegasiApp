@@ -163,42 +163,49 @@ const Home = ({navigation}) => {
         </View>
 
         <View style={style.donationItemsContainer}>
-          {businesses.length > 0 ? (
-            businesses.map((business, index) => {
-              console.log(`Rendering business at index ${index}:`, business);
+  {businesses.length > 0 ? (
+    businesses
+      .filter(business => 
+        industries.selectedIndustryId 
+          ? business.industry === industries.industries.find(ind => ind.industryId === industries.selectedIndustryId)?.name
+          : true // If no industry is selected, show all businesses
+      )
+      .map((business, index) => {
+        console.log(`Rendering business at index ${index}:`, business);
 
-              return (
-                <SingleBusinessItem
-                  key={business.id}
-                  businessId={business.id}
-                  image={
-                    business.businessPictures &&
-                    business.businessPictures.length > 0
-                      ? business.businessPictures[0].startsWith('http') ||
-                        business.businessPictures[0].startsWith('file://')
-                        ? business.businessPictures[0]
-                        : defaultImageUrl
-                      : defaultImageUrl
-                  }
-                  businessName={business.businessName}
-                  location={business.address || 'N/A'}
-                  industry={business.industry || 'N/A'}
-                  badgeTitle={business.industry || 'Industry'}
-                  onPress={selectedBusinessId => {
-                    console.log('Business selected:', selectedBusinessId);
-                    navigation.navigate('SingleBusinessItem', {
-                      businessId: selectedBusinessId,
-                    });
-                  }}
-                />
-              );
-            })
-          ) : (
-            <View>
-              <Text>No businesses available</Text>
-            </View>
-          )}
-        </View>
+        return (
+          <SingleBusinessItem
+            key={business.id}
+            businessId={business.id}
+            image={
+              business.businessPictures &&
+              business.businessPictures.length > 0
+                ? business.businessPictures[0].startsWith('http') ||
+                  business.businessPictures[0].startsWith('file://')
+                  ? business.businessPictures[0]
+                  : defaultImageUrl
+                : defaultImageUrl
+            }
+            businessName={business.businessName}
+            location={business.address || 'N/A'}
+            industry={business.industry || 'N/A'}
+            badgeTitle={business.industry || 'Industry'}
+            onPress={selectedBusinessId => {
+              console.log('Business selected:', selectedBusinessId);
+              navigation.navigate('SingleBusinessItem', {
+                businessId: selectedBusinessId,
+              });
+            }}
+          />
+        );
+      })
+  ) : (
+    <View>
+      <Text>No businesses available</Text>
+    </View>
+  )}
+</View>
+
       </ScrollView>
     </SafeAreaView>
   );
