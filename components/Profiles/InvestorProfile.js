@@ -83,7 +83,7 @@ const InvestorProfile = () => {
   };
 
   return (
-    <ScrollView style={[globalStyle.backgroundWhite]}>
+    <ScrollView style={[globalStyle.backgroundWhite, style.scrollView]}>
       <Text style={style.title}>User Name</Text>
       <TextInput
         style={style.input}

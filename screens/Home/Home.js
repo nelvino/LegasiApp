@@ -136,13 +136,13 @@ const Home = ({navigation}) => {
         <View style={style.searchBox}>
           <Search />
         </View>
-        <Pressable style={style.highlightedImageContainer}>
+        {/* <Pressable style={style.highlightedImageContainer}>
           <Image
             style={style.highlightedImage}
             source={require('../../assets/images/highlighted_image.png')}
             resizeMode={'contain'}
           />
-        </Pressable>
+        </Pressable> */}
         <View style={style.categoryHeader}>
           <Header title={'Select Category'} type={2} />
         </View>

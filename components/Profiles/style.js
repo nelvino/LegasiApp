@@ -8,6 +8,7 @@ import {
 const style = StyleSheet.create({
   scrollView: {
     paddingHorizontal: 20,
+    paddingBottom: 50,
   },
   title: {
     fontSize: scaleFontSize(16),
@@ -16,7 +17,7 @@ const style = StyleSheet.create({
     color: '#333',
   },
   input: {
-    height: verticalScale(22),
+    height: verticalScale(30),
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: horizontalScale(8),
@@ -35,6 +36,11 @@ const style = StyleSheet.create({
     width: horizontalScale(100),
     height: verticalScale(100),
     marginBottom: verticalScale(10),
+  },
+  pickerContainer: {
+    overflow: 'hidden',
+    marginVertical: 10,
+    backgroundColor: '#fff',  // Ensure it's not transparent
   },
   image: {
     width: '100%',
@@ -71,6 +77,9 @@ const style = StyleSheet.create({
     fontSize: scaleFontSize(16),
     color: '#fff',
     fontWeight: 'bold',
+  },
+  bottomSpacer: {
+    height: 70, // This adds extra space below the button
   },
 });
 

@@ -5,6 +5,8 @@ import firestore from '@react-native-firebase/firestore';
 import BusinessOwnerProfile from '../../components/Profiles/BusinessOwnerProfile';
 import InvestorProfile from '../../components/Profiles/InvestorProfile';
 import BackButton from '../../components/BackButton/BackButton'; // Import BackButton
+import style from './style';
+import globalStyle from '../../assets/styles/globalStyle';
 
 const UserProfile = ({navigation, route}) => {
   const {uid} = route.params; // Extract uid from route parameters
@@ -45,9 +47,9 @@ const UserProfile = ({navigation, route}) => {
   }
 
   return (
-    <View>
+    <View style={[globalStyle.backgroundWhite]}>
       {/* BackButton component for navigation */}
-      <BackButton onPress={() => navigation.goBack()} />
+      <BackButton onPress={() => navigation.goBack()} style={style.backArrow}/>
 
       {/* Show the appropriate profile based on the user role */}
       {role === 'business_owner' && <BusinessOwnerProfile uid={uid} />}
