@@ -26,6 +26,16 @@ const style = StyleSheet.create({
   profileImage: {
     width: horizontalScale(50),
     height: verticalScale(50),
+    borderRadius: 20,
+    marginRight: 10,
+  },
+  headerIconsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  logoutIcon: {
+    padding: 5,
   },
   searchBox: {
     marginHorizontal: horizontalScale(24),
@@ -49,7 +59,7 @@ const style = StyleSheet.create({
   categoryItem: {
     marginRight: horizontalScale(10),
   },
-  donationItemsContainer: {
+  businessItemsContainer: {
     marginTop: verticalScale(20),
     marginHorizontal: horizontalScale(24),
     flexDirection: 'row',

@@ -17,7 +17,7 @@ const SingleBusinessItem = ({
   console.log('Rendering SingleBusinessItem for:', businessId);
 
   return (
-    <Pressable onPress={() => onPress(businessId)}>
+    <Pressable onPress={() => onPress(businessId)} style={style.container}>
       <View>
         <View style={style.badge}>
           <Badge title={badgeTitle} />

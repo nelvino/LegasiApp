@@ -18,8 +18,7 @@ const style = StyleSheet.create({
     borderRadius: horizontalScale(20),
   },
   businessInformation: {
-    padding: 10,
-    // Add any additional styling needed for the business information section
+    marginTop: verticalScale(16),
   },
 });
 

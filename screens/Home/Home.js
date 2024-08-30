@@ -12,7 +12,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import Header from '../../components/Header/Header';
 import Search from '../../components/Search/Search';
 import Tab from '../../components/Tab/Tab';
-
 import {Routes} from '../../navigation/Routes';
 import {fetchBusinesses} from '../../api/businesses';
 import {setBusinesses} from '../../redux/reducers/Businesses';
@@ -24,7 +23,8 @@ import {
 import SingleBusinessItem from '../../components/SingleBusinessItem/SingleBusinessItem';
 import {resetToInitialState} from '../../redux/reducers/User';
 import {logOut} from '../../api/user';
-
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faSignOutAlt} from '@fortawesome/free-solid-svg-icons';
 import globalStyle from '../../assets/styles/globalStyle';
 import style from './style';
 
@@ -33,6 +33,7 @@ const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const industries = useSelector(state => state.industries);
   const businesses = useSelector(state => state.businesses.items);
+  const [filteredBusinesses, setFilteredBusinesses] = useState(businesses);
 
   const [industryPage, setIndustryPage] = useState(1);
   const [industryList, setIndustryList] = useState([]);
@@ -56,7 +57,7 @@ const Home = ({navigation}) => {
       console.log('Fetched Industries:', fetchedIndustries); // Log fetched industries
       // Add "All" option at the beginning of the industries list
       const industriesWithAllOption = [
-        { industryId: 0, name: 'All' },
+        {industryId: 0, name: 'All'},
         ...fetchedIndustries,
       ];
       dispatch(setIndustries(industriesWithAllOption));
@@ -84,6 +85,20 @@ const Home = ({navigation}) => {
     }
   }, [industries.industries, industryPage]);
 
+  useEffect(() => {
+    // Update filtered businesses whenever businesses or selected industry changes
+    setFilteredBusinesses(
+      businesses.filter(
+        business =>
+          industries.selectedIndustryId === 0 || // "All" option selected
+          business.industry ===
+            industries.industries.find(
+              ind => ind.industryId === industries.selectedIndustryId,
+            )?.name,
+      ),
+    );
+  }, [businesses, industries.selectedIndustryId]);
+
   const pagination = (items, pageNumber, pageSize) => {
     const startIndex = (pageNumber - 1) * pageSize;
     const endIndex = startIndex + pageSize;
@@ -91,6 +106,24 @@ const Home = ({navigation}) => {
       return [];
     }
     return items.slice(startIndex, endIndex);
+  };
+
+  const handleSearch = searchValue => {
+    if (searchValue.trim() === '') {
+      setFilteredBusinesses(businesses); // Reset to all businesses if search is empty
+    } else {
+      const lowercasedSearchValue = searchValue.toLowerCase();
+      setFilteredBusinesses(
+        businesses.filter(
+          business =>
+            business.businessName.toLowerCase().includes(lowercasedSearchValue) ||
+            business.address.toLowerCase().includes(lowercasedSearchValue) ||
+            business.businessDescription
+              .toLowerCase()
+              .includes(lowercasedSearchValue),
+        ),
+      );
+    }
   };
 
   return (
@@ -103,7 +136,7 @@ const Home = ({navigation}) => {
               <Header title={user.displayName + ' 👋'} />
             </View>
           </View>
-          <View>
+          <View style={style.headerIconsContainer}>
             <Pressable
               onPress={() => {
                 navigation.navigate(Routes.UserProfile, {uid: user.uid});
@@ -118,13 +151,14 @@ const Home = ({navigation}) => {
               onPress={async () => {
                 dispatch(resetToInitialState());
                 await logOut();
-              }}>
-              <Header type={3} title={'Logout'} color={'#156CF7'} />
+              }}
+              style={style.logoutIcon}>
+              <FontAwesomeIcon icon={faSignOutAlt} size={24} color="#156CF7" />
             </Pressable>
           </View>
         </View>
         <View style={style.searchBox}>
-          <Search />
+          <Search onSearch={handleSearch} />
         </View>
 
         <View style={style.categoryHeader}>
@@ -166,47 +200,37 @@ const Home = ({navigation}) => {
             )}
           />
         </View>
+        <View style={style.businessItemsContainer}>
+          {filteredBusinesses.length > 0 ? (
+            filteredBusinesses.map((business, index) => {
+              console.log(`Rendering business at index ${index}:`, business);
 
-        <View style={style.donationItemsContainer}>
-          {businesses.length > 0 ? (
-            businesses
-              .filter(
-                business =>
-                  industries.selectedIndustryId === 0 || // "All" option selected
-                  business.industry ===
-                    industries.industries.find(
-                      ind => ind.industryId === industries.selectedIndustryId,
-                    )?.name,
-              )
-              .map((business, index) => {
-                console.log(`Rendering business at index ${index}:`, business);
-
-                return (
-                  <SingleBusinessItem
-                    key={business.id}
-                    businessId={business.id}
-                    image={
-                      business.businessPictures &&
-                      business.businessPictures.length > 0
-                        ? business.businessPictures[0].startsWith('http') ||
-                          business.businessPictures[0].startsWith('file://')
-                          ? business.businessPictures[0]
-                          : defaultImageUrl
+              return (
+                <SingleBusinessItem
+                  key={business.id}
+                  businessId={business.id}
+                  image={
+                    business.businessPictures &&
+                    business.businessPictures.length > 0
+                      ? business.businessPictures[0].startsWith('http') ||
+                        business.businessPictures[0].startsWith('file://')
+                        ? business.businessPictures[0]
                         : defaultImageUrl
-                    }
-                    businessName={business.businessName}
-                    location={business.address || 'N/A'}
-                    industry={business.industry || 'N/A'}
-                    badgeTitle={business.industry || 'Industry'}
-                    onPress={selectedBusinessId => {
-                      console.log('Business selected:', selectedBusinessId);
-                      navigation.navigate('SingleBusinessItem', {
-                        businessId: selectedBusinessId,
-                      });
-                    }}
-                  />
-                );
-              })
+                      : defaultImageUrl
+                  }
+                  businessName={business.businessName}
+                  location={business.address || 'N/A'}
+                  industry={business.industry || 'N/A'}
+                  badgeTitle={business.industry || 'Industry'}
+                  onPress={selectedBusinessId => {
+                    console.log('Business selected:', selectedBusinessId);
+                    navigation.navigate('SingleBusinessItem', {
+                      businessId: selectedBusinessId,
+                    });
+                  }}
+                />
+              );
+            })
           ) : (
             <View>
               <Text>No businesses available</Text>

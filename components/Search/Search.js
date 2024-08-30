@@ -17,8 +17,9 @@ const Search = props => {
 
   const handleSearch = searchValue => {
     setSearch(searchValue);
-    props.onSearch(searchValue);
+    props.onSearch(searchValue); // Call the onSearch prop with the search value
   };
+
   return (
     <Pressable style={style.searchInputContainer} onPress={handleFocus}>
       <FontAwesomeIcon
@@ -27,7 +28,7 @@ const Search = props => {
         size={scaleFontSize(22)}
       />
       <TextInput
-      placeholder={props.placeholder}
+        placeholder={props.placeholder}
         ref={textInputRef}
         style={style.searchInput}
         value={search}
@@ -45,6 +46,7 @@ Search.defaultProps = {
 Search.propTypes = {
   onPress: PropTypes.func,
   placeholder: PropTypes.string,
+  onSearch: PropTypes.func.isRequired, // Ensure this prop is passed and is a function
 };
 
 export default Search;
