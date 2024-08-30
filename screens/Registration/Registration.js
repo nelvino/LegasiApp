@@ -14,6 +14,8 @@ const Registration = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [role, setRole] = useState('business_owner'); // default to business owner
+
   return (
     <SafeAreaView style={[globalStyle.backgroundWhite, globalStyle.flex]}>
       <View style={style.backButton}>
@@ -48,6 +50,30 @@ const Registration = ({navigation}) => {
             onChangeText={value => setPassword(value)}
           />
         </View>
+        <View style={globalStyle.marginBottom24}>
+          <Text>Select Your Role:</Text>
+          <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+            <Button
+              title="Business Owner"
+              onPress={() => setRole('business_owner')}
+              style={
+                role === 'business_owner'
+                  ? style.selectedButton
+                  : style.unselectedButton
+              }
+            />
+            <Button
+              title="Investor"
+              onPress={() => setRole('investor')}
+              style={
+                role === 'investor'
+                  ? style.selectedButton
+                  : style.unselectedButton
+              }
+            />
+          </View>
+        </View>
+
         {error.length > 0 && <Text style={style.error}>{error}</Text>}
         {success.length > 0 && <Text style={style.success}>{success}</Text>}
         <View style={globalStyle.marginBottom24}>
@@ -55,9 +81,9 @@ const Registration = ({navigation}) => {
             isDisabled={
               fullName.length <= 2 || email.length <= 5 || password.length < 8
             }
-            title={'Registration'}
+            title={'Register'}
             onPress={async () => {
-              let user = await createUser(fullName, email, password);
+              let user = await createUser(fullName, email, password, role);
               if (user.error) {
                 setError(user.error);
               } else {

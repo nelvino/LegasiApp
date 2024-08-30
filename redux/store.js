@@ -12,6 +12,8 @@ import User from './reducers/User';
 // Importing the Categories reducer from the ./reducers/Categories file
 import Categories from './reducers/Categories';
 import Donations from './reducers/Donations';
+import Businesses from './reducers/Businesses';
+import Industries from './reducers/Industries';
 // Creating a rootReducer that combines all reducers in the app
 
 const rootReducer = combineReducers({
@@ -19,6 +21,8 @@ const rootReducer = combineReducers({
   user: User,
   categories: Categories,
   donations: Donations,
+  businesses: Businesses,
+  industries: Industries,
 });
 
 // Configuring the redux-persist library to persist the root reducer with AsyncStorage

@@ -1,11 +1,23 @@
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import store from '../redux/store';
 import {updateToken} from '../redux/reducers/User';
 
-export const createUser = async (fullName, email, password) => {
+export const createUser = async (fullName, email, password, role) => {
   try {
     const user = await auth().createUserWithEmailAndPassword(email, password);
     await user.user.updateProfile({displayName: fullName});
+
+    // Store user data in Firestore
+    await firestore().collection('users').doc(user.user.uid).set({
+      uid: user.user.uid,
+      role: role,
+      profileCompleted: false,
+      profile: {}, // Empty profile to be filled later
+    });
+
+    console.log('Firestore user document created successfully.');
+
     return user;
   } catch (error) {
     if (error.code === 'auth/email-already-in-use') {
@@ -13,6 +25,7 @@ export const createUser = async (fullName, email, password) => {
     } else if (error.code === 'auth/invalid-email') {
       return {error: 'Please enter a valid email address.'};
     }
+    console.error('Error creating user and writing to Firestore:', error);
     return {error: 'Something went wrong with your request.'};
   }
 };
@@ -21,12 +34,19 @@ export const loginUser = async (email, password) => {
   try {
     const response = await auth().signInWithEmailAndPassword(email, password);
     const token = await response.user.getIdToken();
+
+    // Fetch user data from Firestore
+    const userDoc = await firestore().collection('users').doc(response.user.uid).get();
+    const userData = userDoc.data();
+
     return {
       status: true,
       data: {
         displayName: response.user.displayName,
         email: response.user.email,
         token,
+        role: userData.role,
+        profile: userData.profile,
       },
     };
   } catch (error) {

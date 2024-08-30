@@ -21,6 +21,14 @@ import SingleDonationItem from '../../components/SingleDonationItem/SingleDonati
 import {Routes} from '../../navigation/Routes';
 import {updateSelectedCategoryId} from '../../redux/reducers/Categories';
 import {updateSelectedDonationId} from '../../redux/reducers/Donations';
+import {fetchBusinesses} from '../../api/businesses';
+import {setBusinesses} from '../../redux/reducers/Businesses';
+import {fetchIndustries} from '../../api/industries';
+import {
+  setIndustries,
+  updateSelectedIndustryId,
+} from '../../redux/reducers/Industries';
+import SingleBusinessItem from '../../components/SingleBusinessItem/SingleBusinessItem';
 import {resetToInitialState} from '../../redux/reducers/User';
 import {logOut} from '../../api/user';
 
@@ -29,21 +37,20 @@ import globalStyle from '../../assets/styles/globalStyle';
 import style from './style';
 
 const Home = ({navigation}) => {
-  // Using the useSelector hook to select the "user" slice of the store
-  // This will return the user object containing firstName, lastName and userId fields
   const user = useSelector(state => state.user);
-
-  // Using the useDispatch hook to get a reference to the dispatch function
-  // This function allows us to dispatch actions to update the store
   const dispatch = useDispatch();
   const categories = useSelector(state => state.categories);
   const donations = useSelector(state => state.donations);
-
+  const businesses = useSelector(state => state.businesses.items);
+  const industries = useSelector(state => state.industries.industries);
+  console.log('user', user);
   const [donationItems, setDonationItems] = useState([]);
   const [categoryPage, setCategoryPage] = useState(1);
   const [categoryList, setCategoryList] = useState([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(false);
   const categoryPageSize = 4;
+  const defaultImageUrl =
+    'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80';
 
   useEffect(() => {
     const items = donations.items.filter(value =>
@@ -53,13 +60,40 @@ const Home = ({navigation}) => {
   }, [categories.selectedCategoryId]);
 
   useEffect(() => {
-    setIsLoadingCategories(true);
-    setCategoryList(
-      pagination(categories.categories, categoryPage, categoryPageSize),
-    );
-    setCategoryPage(prev => prev + 1);
-    setIsLoadingCategories(false);
-  }, []);
+    const getBusinesses = async () => {
+      const fetchedBusinesses = await fetchBusinesses();
+      console.log('Fetched Businesses:', fetchedBusinesses); // Log the fetched data
+      dispatch(setBusinesses(fetchedBusinesses));
+    };
+    getBusinesses();
+  }, [dispatch]);
+
+  console.log('Businesses from Redux:', businesses);
+
+  useEffect(() => {
+    const getIndustries = async () => {
+      const fetchedIndustries = await fetchIndustries();
+      console.log('Fetched Industries:', fetchedIndustries); // Log the fetched data
+      dispatch(setIndustries(fetchedIndustries));
+    };
+    getIndustries();
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!isLoadingCategories) {
+      setIsLoadingCategories(true);
+      const newCategories = pagination(
+        categories.categories,
+        categoryPage,
+        categoryPageSize,
+      );
+      if (newCategories.length > 0) {
+        setCategoryList(prevState => [...prevState, ...newCategories]);
+        setCategoryPage(prevState => prevState + 1); // Move this line inside condition
+      }
+      setIsLoadingCategories(false);
+    }
+  }, [categories.categories, categoryPage]);
 
   const pagination = (items, pageNumber, pageSize) => {
     const startIndex = (pageNumber - 1) * pageSize;
@@ -80,11 +114,16 @@ const Home = ({navigation}) => {
             </View>
           </View>
           <View>
-            <Image
-              source={{uri: user.profileImage}}
-              style={style.profileImage}
-              resizeMode={'contain'}
-            />
+            <Pressable
+              onPress={() => {
+                navigation.navigate(Routes.UserProfile, {uid: user.uid}); // Pass uid as a parameter
+              }}>
+              <Image
+                source={{uri: user.profileImage}}
+                style={style.profileImage}
+                resizeMode={'contain'}
+              />
+            </Pressable>
             <Pressable
               onPress={async () => {
                 dispatch(resetToInitialState());
@@ -140,6 +179,39 @@ const Home = ({navigation}) => {
               </View>
             )}
           />
+        </View>
+        <View style={style.donationItemsContainer}>
+          {businesses.length > 0 ? (
+            businesses.map((business, index) => {
+              console.log(`Rendering business at index ${index}:`, business);
+
+              return (
+                <SingleBusinessItem
+                  key={business.id}
+                  businessId={business.id}
+                  image={
+                    business.businessPictures &&
+                    business.businessPictures.length > 0
+                      ? business.businessPictures[0]
+                      : defaultImageUrl
+                  }
+                  businessName={business.businessName}
+                  location={business.address || 'N/A'}
+                  industry={business.industry || 'N/A'}
+                  onPress={selectedBusinessId => {
+                    console.log('Business selected:', selectedBusinessId); // Log the selected business ID
+                    navigation.navigate('SingleBusinessItem', {
+                      businessId: selectedBusinessId, // Pass the selected business ID to the new screen
+                    });
+                  }}
+                />
+              );
+            })
+          ) : (
+            <View>
+              <Text>No businesses available</Text>
+            </View>
+          )}
         </View>
         {donationItems.length > 0 && (
           <View style={style.donationItemsContainer}>

@@ -6,6 +6,8 @@ const initialState = {
   isLoggedIn: false,
   profileImage:
     'https://cdn.dribbble.com/users/1577045/screenshots/4914645/media/028d394ffb00cb7a4b2ef9915a384fd9.png?compress=1&resize=400x300&vertical=top',
+  role: '',
+  profile: {},
 };
 
 // Creating a new slice of the store named "user" with its own set of reducers
@@ -14,7 +16,15 @@ export const User = createSlice({
   initialState: initialState,
   reducers: {
     logIn: (state, action) => {
-      return {...state, ...{isLoggedIn: true}, ...action.payload};
+      return {
+        ...state,
+        ...{
+          isLoggedIn: true,
+          role: action.payload.role,
+          profile: action.payload.profile,
+        },
+        ...action.payload,
+      };
     },
     resetToInitialState: () => {
       return initialState;
@@ -22,10 +32,16 @@ export const User = createSlice({
     updateToken: (state, action) => {
       state.token = action.payload;
     },
+    updateProfile: (state, action) => {
+      state.profile = {...state.profile, ...action.payload};
+    },
+    updateRole: (state, action) => {
+      state.role = action.payload;
+    },
   },
 });
 
 // Exporting the reducers here from the "User" slice
 // makes them available to other parts of the app that want to use it
-export const {logIn, resetToInitialState, updateToken} = User.actions;
+export const {logIn, resetToInitialState, updateToken, updateProfile, updateRole} = User.actions;
 export default User.reducer;

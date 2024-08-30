@@ -60,6 +60,18 @@ const style = StyleSheet.create({
     maxWidth: '49%',
     marginBottom: verticalScale(23),
   },
+  industryHeader: {
+    marginTop: 20,
+    marginBottom: 10,
+    paddingHorizontal: 20,
+  },
+  industries: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  industryItem: {
+    marginRight: 10,
+  },
 });
 
 export default style;
