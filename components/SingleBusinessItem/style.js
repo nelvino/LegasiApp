@@ -6,6 +6,12 @@ const style = StyleSheet.create({
     marginBottom: 15,
     // Add any additional styling needed for the container
   },
+  badge: {
+    position: 'absolute',
+    zIndex: 1,
+    top: verticalScale(13),
+    left: horizontalScale(10),
+  },
   image: {
     width: horizontalScale(140),
     height: verticalScale(170),

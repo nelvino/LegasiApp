@@ -17,6 +17,9 @@ const style = StyleSheet.create({
     height: verticalScale(240),
     borderRadius: horizontalScale(5),
   },
+  badge: {
+    marginBottom: verticalScale(16),
+  },
   description: {
     marginTop: verticalScale(7),
     marginHorizontal: horizontalScale(7),
