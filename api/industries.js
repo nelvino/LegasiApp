@@ -7,15 +7,17 @@ export const fetchIndustries = async () => {
       .where('role', '==', 'business_owner')
       .get();
 
-    const industriesSet = new Set();
+    const industriesMap = new Map();
+    let idCounter = 1; // Start a counter for industry IDs
+
     usersSnapshot.docs.forEach(doc => {
       const data = doc.data().profile;
-      if (data.industry) {
-        industriesSet.add(data.industry);
+      if (data.industry && !industriesMap.has(data.industry)) {
+        industriesMap.set(data.industry, { industryId: idCounter++, name: data.industry });
       }
     });
 
-    const industries = Array.from(industriesSet);
+    const industries = Array.from(industriesMap.values());
 
     console.log('Fetched Industries:', industries); // Log the fetched industries
 
