@@ -1,9 +1,11 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 import {
   horizontalScale,
   scaleFontSize,
   verticalScale,
 } from '../../assets/styles/scaling';
+
+const {width} = Dimensions.get('window');
 
 const style = StyleSheet.create({
   container: {
@@ -13,9 +15,33 @@ const style = StyleSheet.create({
   image: {
     marginTop: verticalScale(12),
     marginBottom: verticalScale(24),
-    width: '100%',
     height: verticalScale(240),
     borderRadius: horizontalScale(5),
+    marginHorizontal: horizontalScale(10), // Adds space between images
+  },
+  imageCarousel: {
+    width: width - horizontalScale(40),
+  },
+  imageCarouselContent: {
+    alignItems: 'center',
+  },
+  dotsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: verticalScale(10),
+    marginBottom: verticalScale(16),
+  },
+  dot: {
+    width: horizontalScale(8),
+    height: horizontalScale(8),
+    borderRadius: horizontalScale(4),
+    marginHorizontal: horizontalScale(4),
+  },
+  activeDot: {
+    backgroundColor: '#156CF7',
+  },
+  inactiveDot: {
+    backgroundColor: '#C4C4C4',
   },
   badge: {
     marginBottom: verticalScale(16),
