@@ -1,16 +1,23 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TextInput, Button, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {useDispatch} from 'react-redux';
 import {updateProfile, updateRole} from '../../redux/reducers/User';
+import style from './style';
+import globalStyle from '../../assets/styles/globalStyle';
 
 const InvestorProfile = () => {
   const [profile, setProfile] = useState({
     userName: '',
     bio: '',
-    interests: [],  // Initialize interests as an empty array
-    idDocuments: [],
+    interests: [], // Initialize interests as an empty array
     interestedIndustries: '',
     location: '',
   });
@@ -23,14 +30,16 @@ const InvestorProfile = () => {
         const user = auth().currentUser;
         if (user) {
           const uid = user.uid; // Use the authenticated user's UID directly
-          const profileDoc = await firestore().collection('users').doc(uid).get();
+          const profileDoc = await firestore()
+            .collection('users')
+            .doc(uid)
+            .get();
           if (profileDoc.exists) {
             const data = profileDoc.data().profile;
             setProfile({
               userName: data.userName || '',
               bio: data.bio || '',
-              interests: data.interests || [],  // Default to an empty array
-              idDocuments: data.idDocuments || [],
+              interests: data.interests || [], // Default to an empty array
               interestedIndustries: data.interestedIndustries || '',
               location: data.location || '',
             });
@@ -74,42 +83,51 @@ const InvestorProfile = () => {
   };
 
   return (
-    <ScrollView>
-      <Text>User Name</Text>
+    <ScrollView style={[globalStyle.backgroundWhite]}>
+      <Text style={style.title}>User Name</Text>
       <TextInput
+        style={style.input}
         value={profile.userName}
         onChangeText={text => setProfile({...profile, userName: text})}
       />
 
-      <Text>Bio</Text>
+      <Text style={style.title}>Bio</Text>
       <TextInput
+        style={style.input}
         value={profile.bio}
         onChangeText={text => setProfile({...profile, bio: text})}
       />
 
-      <Text>Interests</Text>
+      <Text style={style.title}>Interests</Text>
       <TextInput
-        value={profile.interests.join(', ')}  // Safely join interests array
+        style={style.input}
+        value={profile.interests.join(', ')} // Safely join interests array
         onChangeText={text =>
           setProfile({...profile, interests: text.split(', ')})
         }
       />
 
-      <Text>Interested Industries</Text>
+      <Text style={style.title}>Interested Industries</Text>
       <TextInput
+        style={style.input}
         value={profile.interestedIndustries}
         onChangeText={text =>
           setProfile({...profile, interestedIndustries: text})
         }
       />
 
-      <Text>Location</Text>
+      <Text style={style.title}>Location</Text>
       <TextInput
+        style={style.input}
         value={profile.location}
         onChangeText={text => setProfile({...profile, location: text})}
       />
 
-      <Button title="Update Profile" onPress={handleUpdateProfile} />
+      <TouchableOpacity
+        style={style.updateButton}
+        onPress={handleUpdateProfile}>
+        <Text style={style.updateButtonText}>Update Profile</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };

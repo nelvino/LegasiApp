@@ -192,7 +192,10 @@ const Home = ({navigation}) => {
                   image={
                     business.businessPictures &&
                     business.businessPictures.length > 0
-                      ? business.businessPictures[0]
+                      ? business.businessPictures[0].startsWith('http') ||
+                        business.businessPictures[0].startsWith('file://') // Check for both URL and iOS file path
+                        ? business.businessPictures[0]
+                        : defaultImageUrl // Fallback if neither condition is met
                       : defaultImageUrl
                   }
                   businessName={business.businessName}
