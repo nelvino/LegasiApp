@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import {
-  View,
   Text,
   TextInput,
   ScrollView,
+  View,
   TouchableOpacity,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
@@ -17,9 +17,9 @@ const InvestorProfile = () => {
   const [profile, setProfile] = useState({
     userName: '',
     bio: '',
-    interests: [], // Initialize interests as an empty array
-    interestedIndustries: '',
     location: '',
+    interests: '',
+    interestedIndustries: '',
   });
 
   const dispatch = useDispatch();
@@ -29,7 +29,7 @@ const InvestorProfile = () => {
       try {
         const user = auth().currentUser;
         if (user) {
-          const uid = user.uid; // Use the authenticated user's UID directly
+          const uid = user.uid;
           const profileDoc = await firestore()
             .collection('users')
             .doc(uid)
@@ -37,11 +37,11 @@ const InvestorProfile = () => {
           if (profileDoc.exists) {
             const data = profileDoc.data().profile;
             setProfile({
-              userName: data.userName || '',
+              userName: user.displayName || '',
               bio: data.bio || '',
-              interests: data.interests || [], // Default to an empty array
-              interestedIndustries: data.interestedIndustries || '',
               location: data.location || '',
+              interests: data.interests || '',
+              interestedIndustries: data.interestedIndustries || '',
             });
             dispatch(updateProfile(data));
             dispatch(updateRole(profileDoc.data().role));
@@ -72,6 +72,9 @@ const InvestorProfile = () => {
             profileCompleted: true,
           });
 
+        // Update displayName in Firebase Auth
+        await user.updateProfile({displayName: profile.userName});
+
         dispatch(updateProfile(profile));
         alert('Profile updated successfully');
       } else {
@@ -98,13 +101,18 @@ const InvestorProfile = () => {
         onChangeText={text => setProfile({...profile, bio: text})}
       />
 
+      <Text style={style.title}>Location</Text>
+      <TextInput
+        style={style.input}
+        value={profile.location}
+        onChangeText={text => setProfile({...profile, location: text})}
+      />
+
       <Text style={style.title}>Interests</Text>
       <TextInput
         style={style.input}
-        value={profile.interests.join(', ')} // Safely join interests array
-        onChangeText={text =>
-          setProfile({...profile, interests: text.split(', ')})
-        }
+        value={profile.interests}
+        onChangeText={text => setProfile({...profile, interests: text})}
       />
 
       <Text style={style.title}>Interested Industries</Text>
@@ -116,18 +124,12 @@ const InvestorProfile = () => {
         }
       />
 
-      <Text style={style.title}>Location</Text>
-      <TextInput
-        style={style.input}
-        value={profile.location}
-        onChangeText={text => setProfile({...profile, location: text})}
-      />
-
       <TouchableOpacity
         style={style.updateButton}
         onPress={handleUpdateProfile}>
         <Text style={style.updateButtonText}>Update Profile</Text>
       </TouchableOpacity>
+      <View style={style.bottomSpacer} />
     </ScrollView>
   );
 };

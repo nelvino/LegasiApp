@@ -10,9 +10,9 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import {useDispatch} from 'react-redux';
-import {launchImageLibrary} from 'react-native-image-picker'; // Import image picker
+import {launchImageLibrary} from 'react-native-image-picker';
 import {updateProfile, updateRole} from '../../redux/reducers/User';
-import {Picker} from '@react-native-picker/picker'; // Import the Picker component
+import {Picker} from '@react-native-picker/picker';
 import style from './style';
 import globalStyle from '../../assets/styles/globalStyle';
 
@@ -38,10 +38,11 @@ const BusinessOwnerProfile = () => {
   const [profile, setProfile] = useState({
     businessName: '',
     businessDescription: '',
-    businessPictures: [], // Array to store image URIs
+    businessPictures: [],
     industry: '',
     address: '',
     country: '',
+    displayName: '', // Added displayName for updating user's name
   });
 
   const dispatch = useDispatch();
@@ -65,6 +66,7 @@ const BusinessOwnerProfile = () => {
               industry: data.industry || '',
               address: data.address || '',
               country: data.country || '',
+              displayName: user.displayName || '', // Set displayName from auth
             });
             dispatch(updateProfile(data));
             dispatch(updateRole(profileDoc.data().role));
@@ -84,7 +86,6 @@ const BusinessOwnerProfile = () => {
 
   const handleImageUpload = () => {
     launchImageLibrary({mediaType: 'photo', selectionLimit: 3}, response => {
-      // Allow up to 3 images
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.errorCode) {
@@ -119,6 +120,9 @@ const BusinessOwnerProfile = () => {
             profileCompleted: true,
           });
 
+        // Update displayName in Firebase Auth
+        await user.updateProfile({displayName: profile.displayName});
+
         dispatch(updateProfile(profile));
         alert('Profile updated successfully');
       } else {
@@ -131,6 +135,13 @@ const BusinessOwnerProfile = () => {
 
   return (
     <ScrollView style={[globalStyle.backgroundWhite, style.scrollView]}>
+      <Text style={style.title}>User Name</Text>
+      <TextInput
+        style={style.input}
+        value={profile.displayName}
+        onChangeText={text => setProfile({...profile, displayName: text})}
+      />
+
       <Text style={style.title}>Business Name</Text>
       <TextInput
         style={style.input}

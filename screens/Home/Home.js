@@ -116,7 +116,9 @@ const Home = ({navigation}) => {
       setFilteredBusinesses(
         businesses.filter(
           business =>
-            business.businessName.toLowerCase().includes(lowercasedSearchValue) ||
+            business.businessName
+              .toLowerCase()
+              .includes(lowercasedSearchValue) ||
             business.address.toLowerCase().includes(lowercasedSearchValue) ||
             business.businessDescription
               .toLowerCase()
@@ -126,6 +128,8 @@ const Home = ({navigation}) => {
     }
   };
 
+  const userName = user.profile.displayName || user.profile.userName || user.displayName || 'User';
+
   return (
     <SafeAreaView style={[globalStyle.backgroundWhite, globalStyle.flex]}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -133,7 +137,7 @@ const Home = ({navigation}) => {
           <View>
             <Text style={style.headerIntroText}>Hello, </Text>
             <View style={style.username}>
-              <Header title={user.displayName + ' 👋'} />
+              <Header title={userName + ' 👋'} />
             </View>
           </View>
           <View style={style.headerIconsContainer}>
