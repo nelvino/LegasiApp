@@ -44,12 +44,31 @@ const Home = ({navigation}) => {
 
   useEffect(() => {
     const getBusinesses = async () => {
-      const fetchedBusinesses = await fetchBusinesses();
-      console.log('Fetched Businesses:', fetchedBusinesses);
-      dispatch(setBusinesses(fetchedBusinesses));
+      try {
+        const fetchedBusinesses = await fetchBusinesses();
+        console.log('Fetched Businesses:', fetchedBusinesses);
+        dispatch(setBusinesses(fetchedBusinesses));
+      } catch (error) {
+        console.error('Error fetching businesses:', error);
+      }
     };
     getBusinesses();
   }, [dispatch]);
+
+  useEffect(() => {
+    // Update filtered businesses whenever businesses or selected industry changes
+    if (businesses) {
+      const updatedFilteredBusinesses = businesses.filter(
+        business =>
+          industries.selectedIndustryId === 0 || // "All" option selected
+          business.industry ===
+            industries.industries.find(
+              ind => ind.industryId === industries.selectedIndustryId,
+            )?.name,
+      );
+      setFilteredBusinesses(updatedFilteredBusinesses);
+    }
+  }, [businesses, industries.selectedIndustryId]);
 
   useEffect(() => {
     const getIndustries = async () => {
@@ -128,7 +147,11 @@ const Home = ({navigation}) => {
     }
   };
 
-  const userName = user.profile.displayName || user.profile.userName || user.displayName || 'User';
+  const userName =
+    user.profile.displayName ||
+    user.profile.userName ||
+    user.displayName ||
+    'User';
 
   return (
     <SafeAreaView style={[globalStyle.backgroundWhite, globalStyle.flex]}>

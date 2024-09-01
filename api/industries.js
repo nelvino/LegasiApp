@@ -19,7 +19,7 @@ export const fetchIndustries = async () => {
 
     const industries = Array.from(industriesMap.values());
 
-    console.log('Fetched Industries:', industries); // Log the fetched industries
+    console.log('Fetched Industries in the API:', industries); // Log the fetched industries
 
     return industries;
   } catch (error) {
