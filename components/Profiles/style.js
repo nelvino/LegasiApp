@@ -9,6 +9,12 @@ const style = StyleSheet.create({
   scrollView: {
     paddingHorizontal: 20,
     paddingBottom: 50,
+    marginTop: 35,
+  },
+  backArrow: {
+    marginTop: verticalScale(40),
+    marginLeft: 20,
+    marginBottom: verticalScale(20),
   },
   title: {
     fontSize: scaleFontSize(16),
@@ -68,7 +74,7 @@ const style = StyleSheet.create({
     textAlign: 'center',
   },
   updateButton: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#9EC8BE',
     paddingVertical: verticalScale(14),
     borderRadius: horizontalScale(8),
     alignItems: 'center',
@@ -79,7 +85,7 @@ const style = StyleSheet.create({
     fontWeight: 'bold',
   },
   bottomSpacer: {
-    height: 70, // This adds extra space below the button
+    height: 70,
   },
 });
 

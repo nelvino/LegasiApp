@@ -2,14 +2,12 @@ import React, {useEffect, useRef} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import RootNavigation from './navigation/RootNavigation';
 import {AppState} from 'react-native';
-// Importing the Provider component from the React Redux library
-// The Provider component is a higher-order component that provides the Redux store to all components in the app
 import {Provider} from 'react-redux';
-
 import store from './redux/store';
 import {PersistGate} from 'redux-persist/integration/react';
 import {persistor} from './redux/store';
 import {checkToken} from './api/user';
+import Toast from 'react-native-toast-message';
 
 const App = () => {
   const appState = useRef(AppState.currentState);
@@ -37,6 +35,7 @@ const App = () => {
       <PersistGate persistor={persistor} loading={null}>
         <NavigationContainer>
           <RootNavigation />
+          <Toast />
         </NavigationContainer>
       </PersistGate>
     </Provider>

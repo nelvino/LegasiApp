@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   TextInput,
@@ -10,12 +10,15 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
-import { useDispatch } from 'react-redux';
-import { launchImageLibrary } from 'react-native-image-picker';
-import { updateProfile, updateRole } from '../../redux/reducers/User';
-import { Picker } from '@react-native-picker/picker';
+import {useDispatch} from 'react-redux';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {updateProfile, updateRole} from '../../redux/reducers/User';
+import {Picker} from '@react-native-picker/picker';
 import style from './style';
 import globalStyle from '../../assets/styles/globalStyle';
+import Toast from 'react-native-toast-message';
+import {useNavigation} from '@react-navigation/native';
+import BackButton from '../../components/BackButton/BackButton';
 
 const industriesList = [
   'Technology',
@@ -47,6 +50,7 @@ const BusinessOwnerProfile = () => {
   });
 
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -83,13 +87,15 @@ const BusinessOwnerProfile = () => {
     };
 
     fetchProfile();
-  }, []);
+  }, [dispatch]);
 
-  const uploadImageToStorage = async (imageUri) => {
+  const uploadImageToStorage = async imageUri => {
     try {
       const user = auth().currentUser;
       const imageName = imageUri.substring(imageUri.lastIndexOf('/') + 1);
-      const storageRef = storage().ref(`users/${user.uid}/businessPictures/${imageName}`);
+      const storageRef = storage().ref(
+        `users/${user.uid}/businessPictures/${imageName}`,
+      );
 
       const response = await fetch(imageUri);
       const blob = await response.blob();
@@ -104,35 +110,41 @@ const BusinessOwnerProfile = () => {
   };
 
   const handleImageUpload = () => {
-    launchImageLibrary({ mediaType: 'photo', selectionLimit: 3 }, async response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        console.error('ImagePicker Error: ', response.errorMessage);
-      } else {
-        try {
-          const uploadedImages = await Promise.all(
-            response.assets.map(async (asset) => {
-              const downloadUrl = await uploadImageToStorage(asset.uri);
-              return downloadUrl;
-            })
-          );
-          setProfile({
-            ...profile,
-            businessPictures: [...profile.businessPictures, ...uploadedImages],
-          });
-        } catch (error) {
-          console.error('Error uploading images: ', error);
+    launchImageLibrary(
+      {mediaType: 'photo', selectionLimit: 3},
+      async response => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.errorCode) {
+          console.error('ImagePicker Error: ', response.errorMessage);
+        } else {
+          try {
+            const uploadedImages = await Promise.all(
+              response.assets.map(async asset => {
+                const downloadUrl = await uploadImageToStorage(asset.uri);
+                return downloadUrl;
+              }),
+            );
+            setProfile({
+              ...profile,
+              businessPictures: [
+                ...profile.businessPictures,
+                ...uploadedImages,
+              ],
+            });
+          } catch (error) {
+            console.error('Error uploading images: ', error);
+          }
         }
-      }
-    });
+      },
+    );
   };
 
   const handleDeleteImage = index => {
     const updatedPictures = profile.businessPictures.filter(
       (_, i) => i !== index,
     );
-    setProfile({ ...profile, businessPictures: updatedPictures });
+    setProfile({...profile, businessPictures: updatedPictures});
   };
 
   const handleUpdateProfile = async () => {
@@ -144,15 +156,24 @@ const BusinessOwnerProfile = () => {
           .collection('users')
           .doc(uid)
           .update({
-            profile: { ...profile },
+            profile: {...profile},
             profileCompleted: true,
           });
 
         // Update displayName in Firebase Auth
-        await user.updateProfile({ displayName: profile.displayName });
+        await user.updateProfile({displayName: profile.displayName});
 
         dispatch(updateProfile(profile));
-        alert('Profile updated successfully');
+
+        // Show a success toast
+        Toast.show({
+          type: 'success',
+          text1: 'Profile Updated',
+          text2: 'Your profile has been updated successfully!',
+        });
+
+        // Redirect to the Home page
+        navigation.navigate('Home');
       } else {
         console.error('User is not authenticated');
       }
@@ -163,18 +184,19 @@ const BusinessOwnerProfile = () => {
 
   return (
     <ScrollView style={[globalStyle.backgroundWhite, style.scrollView]}>
+      <BackButton onPress={() => navigation.goBack()} style={style.backArrow} />
       <Text style={style.title}>User Name</Text>
       <TextInput
         style={style.input}
         value={profile.displayName}
-        onChangeText={text => setProfile({ ...profile, displayName: text })}
+        onChangeText={text => setProfile({...profile, displayName: text})}
       />
 
       <Text style={style.title}>Business Name</Text>
       <TextInput
         style={style.input}
         value={profile.businessName}
-        onChangeText={text => setProfile({ ...profile, businessName: text })}
+        onChangeText={text => setProfile({...profile, businessName: text})}
       />
 
       <Text style={style.title}>Business Description</Text>
@@ -182,7 +204,7 @@ const BusinessOwnerProfile = () => {
         style={style.input}
         value={profile.businessDescription}
         onChangeText={text =>
-          setProfile({ ...profile, businessDescription: text })
+          setProfile({...profile, businessDescription: text})
         }
       />
 
@@ -191,7 +213,7 @@ const BusinessOwnerProfile = () => {
         <Picker
           selectedValue={profile.industry}
           onValueChange={itemValue =>
-            setProfile({ ...profile, industry: itemValue })
+            setProfile({...profile, industry: itemValue})
           }>
           {industriesList.map(industry => (
             <Picker.Item key={industry} label={industry} value={industry} />
@@ -203,21 +225,21 @@ const BusinessOwnerProfile = () => {
       <TextInput
         style={style.input}
         value={profile.address}
-        onChangeText={text => setProfile({ ...profile, address: text })}
+        onChangeText={text => setProfile({...profile, address: text})}
       />
 
       <Text style={style.title}>Country</Text>
       <TextInput
         style={style.input}
         value={profile.country}
-        onChangeText={text => setProfile({ ...profile, country: text })}
+        onChangeText={text => setProfile({...profile, country: text})}
       />
 
       <Text style={style.title}>Business Pictures</Text>
       <View style={style.imageContainer}>
         {profile.businessPictures.map((image, index) => (
           <View key={index} style={style.imageWrapper}>
-            <Image source={{ uri: image }} style={style.image} />
+            <Image source={{uri: image}} style={style.image} />
             <TouchableOpacity
               style={style.deleteButton}
               onPress={() => handleDeleteImage(index)}>

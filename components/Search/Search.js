@@ -4,10 +4,12 @@ import PropTypes from 'prop-types';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faSearch} from '@fortawesome/free-solid-svg-icons';
 import {scaleFontSize} from '../../assets/styles/scaling';
-
 import style from './style';
 
-const Search = props => {
+const Search = ({
+  onSearch = () => {},
+  placeholder = 'Search',
+}) => {
   const textInputRef = useRef(null);
   const [search, setSearch] = useState('');
 
@@ -17,18 +19,18 @@ const Search = props => {
 
   const handleSearch = searchValue => {
     setSearch(searchValue);
-    props.onSearch(searchValue); // Call the onSearch prop with the search value
+    onSearch(searchValue); // Call the onSearch prop with the search value
   };
 
   return (
     <Pressable style={style.searchInputContainer} onPress={handleFocus}>
       <FontAwesomeIcon
         icon={faSearch}
-        color={'#25C0FF'}
+        color={'#9EC8BE'}
         size={scaleFontSize(22)}
       />
       <TextInput
-        placeholder={props.placeholder}
+        placeholder={placeholder}
         ref={textInputRef}
         style={style.searchInput}
         value={search}
@@ -36,11 +38,6 @@ const Search = props => {
       />
     </Pressable>
   );
-};
-
-Search.defaultProps = {
-  onSearch: () => {},
-  placeholder: 'Search',
 };
 
 Search.propTypes = {

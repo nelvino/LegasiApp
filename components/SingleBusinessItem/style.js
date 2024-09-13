@@ -4,7 +4,6 @@ import {horizontalScale, verticalScale} from '../../assets/styles/scaling';
 const style = StyleSheet.create({
   container: {
     marginBottom: 15,
-    // Add any additional styling needed for the container
   },
   badge: {
     position: 'absolute',

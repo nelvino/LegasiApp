@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {SafeAreaView, ScrollView, View, Text} from 'react-native';
+import {
+  SafeAreaView,
+  ScrollView,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import Input from '../../components/Input/Input';
 import Header from '../../components/Header/Header';
 import Button from '../../components/Button/Button';
@@ -14,7 +21,7 @@ const Registration = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
-  const [role, setRole] = useState('business_owner'); // default to business owner
+  const [role, setRole] = useState('');
 
   return (
     <SafeAreaView style={[globalStyle.backgroundWhite, globalStyle.flex]}>
@@ -24,6 +31,14 @@ const Registration = ({navigation}) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={style.container}>
+
+        <View style={style.logoContainer}>
+          <Image
+            source={require('../../assets/images/legasi_logo_naranja.png')}
+            style={style.logo}
+          />
+        </View>
+
         <View style={globalStyle.marginBottom24}>
           <Header type={1} title={'Hello and Welcome!'} />
         </View>
@@ -52,25 +67,39 @@ const Registration = ({navigation}) => {
         </View>
         <View style={globalStyle.marginBottom24}>
           <Text>Select Your Role:</Text>
-          <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-            <Button
-              title="Business Owner"
+          <View style={style.roleSelectionContainer}>
+            <TouchableOpacity
               onPress={() => setRole('business_owner')}
-              style={
+              style={[
                 role === 'business_owner'
                   ? style.selectedButton
-                  : style.unselectedButton
-              }
-            />
-            <Button
-              title="Investor"
+                  : style.unselectedButton,
+              ]}>
+              <Text
+                style={[
+                  role === 'business_owner'
+                    ? style.selectedButtonText
+                    : style.unselectedButtonText,
+                ]}>
+                Business Owner
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => setRole('investor')}
-              style={
+              style={[
                 role === 'investor'
                   ? style.selectedButton
-                  : style.unselectedButton
-              }
-            />
+                  : style.unselectedButton,
+              ]}>
+              <Text
+                style={[
+                  role === 'investor'
+                    ? style.selectedButtonText
+                    : style.unselectedButtonText,
+                ]}>
+                Investor
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
 

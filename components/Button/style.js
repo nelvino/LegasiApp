@@ -7,9 +7,10 @@ import {
 
 const style = StyleSheet.create({
   button: {
-    backgroundColor: '#2979F2',
+    backgroundColor: '#9EC8BE',
     height: verticalScale(55),
     justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: horizontalScale(50),
   },
   disabled: {

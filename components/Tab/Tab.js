@@ -1,16 +1,11 @@
-import React, { useRef, useState } from 'react';
-import { Pressable, Text } from 'react-native';
+import React, {useRef, useState} from 'react';
+import {Pressable, Text} from 'react-native';
 import PropTypes from 'prop-types';
 
 import style from './style';
-import { horizontalScale } from '../../assets/styles/scaling';
+import {horizontalScale} from '../../assets/styles/scaling';
 
-const Tab = ({ 
-  tabId, 
-  title, 
-  isInactive = false, 
-  onPress = () => {} 
-}) => {
+const Tab = ({tabId, title, isInactive = false, onPress = () => {}}) => {
   const [width, setWidth] = useState(0);
   const textRef = useRef(null);
   const paddingHorizontal = 33;
@@ -21,15 +16,13 @@ const Tab = ({
   return (
     <Pressable
       style={[style.tab, isInactive && style.inactiveTab, tabWidth]}
-      onPress={() => onPress(tabId)}
-    >
+      onPress={() => onPress(tabId)}>
       <Text
         onTextLayout={event => {
           setWidth(event.nativeEvent.lines[0].width);
         }}
         ref={textRef}
-        style={[style.title, isInactive && style.inactiveTitle]}
-      >
+        style={[style.title, isInactive && style.inactiveTitle]}>
         {title}
       </Text>
     </Pressable>

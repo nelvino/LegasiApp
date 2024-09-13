@@ -1,27 +1,24 @@
 import React from 'react';
-import {Pressable, Text} from 'react-native';
+import {TouchableOpacity, Text} from 'react-native';
 import PropTypes from 'prop-types';
+
 import style from './style';
-const Button = props => {
+
+const Button = ({onPress = () => {}, title = 'Button', disabled = false}) => {
   return (
-    <Pressable
-      disabled={props.isDisabled}
-      style={[style.button, props.isDisabled && style.disabled]}
-      onPress={() => props.onPress()}>
-      <Text style={style.title}>{props.title}</Text>
-    </Pressable>
+    <TouchableOpacity
+      style={[style.button, disabled && style.disabledButton]}
+      onPress={onPress}
+      disabled={disabled}>
+      <Text style={style.buttonText}>{title}</Text>
+    </TouchableOpacity>
   );
 };
 
-Button.defaultProps = {
-  isDisabled: false,
-  onPress: () => {},
-};
-
 Button.propTypes = {
-  title: PropTypes.string.isRequired,
-  isDisabled: PropTypes.bool,
   onPress: PropTypes.func,
+  title: PropTypes.string,
+  disabled: PropTypes.bool,
 };
 
 export default Button;

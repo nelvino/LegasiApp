@@ -1,51 +1,52 @@
 import React from 'react';
 import {Image, View, Pressable} from 'react-native';
 import PropTypes from 'prop-types';
-
 import Badge from '../Badge/Badge';
 import Header from '../Header/Header';
-
 import style from './style';
 
-const SingleDonationItem = props => {
+const SingleDonationItem = ({
+  onPress = () => {},
+  donationItemId,
+  uri,
+  badgeTitle,
+  donationTitle,
+  price,
+}) => {
   return (
     <Pressable
       onPress={() => {
-        props.onPress(props.donationItemId);
+        onPress(donationItemId);
       }}>
       <View>
         <View style={style.badge}>
-          <Badge title={props.badgeTitle} />
+          <Badge title={badgeTitle} />
         </View>
         <Image
           resizeMode={'cover'}
-          source={{uri: props.uri}}
+          source={{uri}}
           style={style.image}
         />
       </View>
       <View style={style.donationInformation}>
         <Header
-          title={props.donationTitle}
+          title={donationTitle}
           type={3}
           color={'#0A043C'}
           numberOfLines={1}
         />
         <View style={style.price}>
           <Header
-            title={'$' + props.price.toFixed(2)}
+            title={`$${price.toFixed(2)}`}
             type={3}
             color={'#156CF7'}
           />
         </View>
       </View>
-      <Header title={props.donationTitle} type={3} color={'#0A043C'} />
-      <Header title={'$' + props.price.toFixed(2)} type={3} color={'#156CF7'} />
+      <Header title={donationTitle} type={3} color={'#0A043C'} />
+      <Header title={`$${price.toFixed(2)}`} type={3} color={'#9EC8BE'} />
     </Pressable>
   );
-};
-
-SingleDonationItem.defaultProps = {
-  onPress: () => {},
 };
 
 SingleDonationItem.propTypes = {
