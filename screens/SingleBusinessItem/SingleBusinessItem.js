@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import {
   Image,
@@ -14,6 +14,8 @@ import Badge from '../../components/Badge/Badge';
 import Header from '../../components/Header/Header';
 import style from './style';
 import globalStyle from '../../assets/styles/globalStyle';
+import {Routes} from '../../navigation/Routes';
+import Button from '../../components/Button/Button';
 
 const defaultImageUrl =
   'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80';
@@ -22,18 +24,33 @@ const {width} = Dimensions.get('window');
 
 const SingleBusinessItem = ({navigation, route}) => {
   const {businessId} = route.params;
-  const business = useSelector(state =>
-    state.businesses.items.find(item => item.id === businessId),
-  );
+  const [business, setBusiness] = useState(null);
+  const businesses = useSelector(state => state.businesses.items);
+
+  useEffect(() => {
+    const foundBusiness = businesses.find(item => item.id === businessId);
+    if (foundBusiness) {
+      setBusiness(foundBusiness);
+    }
+  }, [businesses, businessId]);
 
   const [activeIndex, setActiveIndex] = useState(0);
+
+  if (!business) {
+    return (
+      <SafeAreaView style={[globalStyle.backgroundWhite, globalStyle.flex]}>
+        <Text>Loading...</Text>
+      </SafeAreaView>
+    );
+  }
 
   const renderItem = ({item}) => (
     <Image
       source={{
-        uri: item.startsWith('http') || item.startsWith('file://')
-          ? item
-          : defaultImageUrl,
+        uri:
+          item.startsWith('http') || item.startsWith('file://')
+            ? item
+            : defaultImageUrl,
       }}
       style={[style.image, {width: width - 60}]}
     />
@@ -77,14 +94,28 @@ const SingleBusinessItem = ({navigation, route}) => {
         <View style={style.badge}>
           <Badge title={business.industry} />
         </View>
-        <Header type={1} title={business.businessName} />
-        <Text style={style.description}>{business.businessDescription}</Text>
-        <Text style={style.infoText}>
-          Location: {business.address || 'N/A'}
-        </Text>
-        <Text style={style.infoText}>
-          Industry: {business.industry || 'N/A'}
-        </Text>
+        <View style={style.infoContainer}>
+          <View style={style.card}>
+            <Text style={style.label}>Business Name</Text>
+            <Text style={style.businessName}>{business.businessName}</Text>
+          </View>
+
+          <View style={style.card}>
+            <Text style={style.label}>Business Description</Text>
+            <Text style={style.businessDescription}>
+              {business.businessDescription}
+            </Text>
+          </View>
+
+          <View style={style.card}>
+            <Text style={style.label}>Address</Text>
+            <Text style={style.address}>{business.address || 'N/A'}</Text>
+          </View>
+        </View>
+        <Button
+          title={'Donate'}
+          onPress={() => navigation.navigate(Routes.Payment)}
+        />
       </ScrollView>
     </SafeAreaView>
   );

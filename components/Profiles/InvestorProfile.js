@@ -12,6 +12,9 @@ import {useDispatch} from 'react-redux';
 import {updateProfile, updateRole} from '../../redux/reducers/User';
 import style from './style';
 import globalStyle from '../../assets/styles/globalStyle';
+import Toast from 'react-native-toast-message';  // Import Toast
+import {useNavigation} from '@react-navigation/native';  // Import useNavigation for navigation
+import BackButton from '../BackButton/BackButton';
 
 const InvestorProfile = () => {
   const [profile, setProfile] = useState({
@@ -23,6 +26,7 @@ const InvestorProfile = () => {
   });
 
   const dispatch = useDispatch();
+  const navigation = useNavigation();  // Initialize navigation
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -57,7 +61,7 @@ const InvestorProfile = () => {
     };
 
     fetchProfile();
-  }, []);
+  }, [dispatch]);
 
   const handleUpdateProfile = async () => {
     try {
@@ -76,7 +80,16 @@ const InvestorProfile = () => {
         await user.updateProfile({displayName: profile.userName});
 
         dispatch(updateProfile(profile));
-        alert('Profile updated successfully');
+
+        // Show a success toast
+        Toast.show({
+          type: 'success',
+          text1: 'Profile Updated',
+          text2: 'Your profile has been updated successfully!',
+        });
+
+        // Redirect to the Home page
+        navigation.navigate('Home');
       } else {
         console.error('User is not authenticated');
       }
@@ -87,6 +100,7 @@ const InvestorProfile = () => {
 
   return (
     <ScrollView style={[globalStyle.backgroundWhite, style.scrollView]}>
+      <BackButton onPress={() => navigation.goBack()} style={style.backArrow} />
       <Text style={style.title}>User Name</Text>
       <TextInput
         style={style.input}

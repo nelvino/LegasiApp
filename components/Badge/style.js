@@ -7,7 +7,7 @@ import {
 
 const style = StyleSheet.create({
   badge: {
-    backgroundColor: '#145855',
+    backgroundColor: '#9EC8BE',
     height: verticalScale(22),
     justifyContent: 'center',
     borderRadius: horizontalScale(50),

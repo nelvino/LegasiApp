@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 import {useDispatch} from 'react-redux';
 import {launchImageLibrary} from 'react-native-image-picker';
@@ -15,6 +16,9 @@ import {updateProfile, updateRole} from '../../redux/reducers/User';
 import {Picker} from '@react-native-picker/picker';
 import style from './style';
 import globalStyle from '../../assets/styles/globalStyle';
+import Toast from 'react-native-toast-message';
+import {useNavigation} from '@react-navigation/native';
+import BackButton from '../../components/BackButton/BackButton';
 
 const industriesList = [
   'Technology',
@@ -46,6 +50,7 @@ const BusinessOwnerProfile = () => {
   });
 
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -82,22 +87,57 @@ const BusinessOwnerProfile = () => {
     };
 
     fetchProfile();
-  }, []);
+  }, [dispatch]);
+
+  const uploadImageToStorage = async imageUri => {
+    try {
+      const user = auth().currentUser;
+      const imageName = imageUri.substring(imageUri.lastIndexOf('/') + 1);
+      const storageRef = storage().ref(
+        `users/${user.uid}/businessPictures/${imageName}`,
+      );
+
+      const response = await fetch(imageUri);
+      const blob = await response.blob();
+
+      await storageRef.put(blob);
+      const downloadUrl = await storageRef.getDownloadURL();
+      return downloadUrl;
+    } catch (error) {
+      console.error('Error uploading image to storage: ', error);
+      throw error;
+    }
+  };
 
   const handleImageUpload = () => {
-    launchImageLibrary({mediaType: 'photo', selectionLimit: 3}, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        console.error('ImagePicker Error: ', response.errorMessage);
-      } else {
-        const selectedImages = response.assets.map(asset => asset.uri);
-        setProfile({
-          ...profile,
-          businessPictures: [...profile.businessPictures, ...selectedImages],
-        });
-      }
-    });
+    launchImageLibrary(
+      {mediaType: 'photo', selectionLimit: 3},
+      async response => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.errorCode) {
+          console.error('ImagePicker Error: ', response.errorMessage);
+        } else {
+          try {
+            const uploadedImages = await Promise.all(
+              response.assets.map(async asset => {
+                const downloadUrl = await uploadImageToStorage(asset.uri);
+                return downloadUrl;
+              }),
+            );
+            setProfile({
+              ...profile,
+              businessPictures: [
+                ...profile.businessPictures,
+                ...uploadedImages,
+              ],
+            });
+          } catch (error) {
+            console.error('Error uploading images: ', error);
+          }
+        }
+      },
+    );
   };
 
   const handleDeleteImage = index => {
@@ -124,7 +164,16 @@ const BusinessOwnerProfile = () => {
         await user.updateProfile({displayName: profile.displayName});
 
         dispatch(updateProfile(profile));
-        alert('Profile updated successfully');
+
+        // Show a success toast
+        Toast.show({
+          type: 'success',
+          text1: 'Profile Updated',
+          text2: 'Your profile has been updated successfully!',
+        });
+
+        // Redirect to the Home page
+        navigation.navigate('Home');
       } else {
         console.error('User is not authenticated');
       }
@@ -135,6 +184,7 @@ const BusinessOwnerProfile = () => {
 
   return (
     <ScrollView style={[globalStyle.backgroundWhite, style.scrollView]}>
+      <BackButton onPress={() => navigation.goBack()} style={style.backArrow} />
       <Text style={style.title}>User Name</Text>
       <TextInput
         style={style.input}

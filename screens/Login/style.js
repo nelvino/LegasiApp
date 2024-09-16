@@ -7,6 +7,15 @@ const style = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: verticalScale(24),
+  },
+  logo: {
+    width: horizontalScale(150),
+    height: verticalScale(150),
+    resizeMode: 'contain',
+  },
   registrationButton: {
     alignItems: 'center',
   },

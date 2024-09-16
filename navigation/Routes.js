@@ -5,4 +5,5 @@ export const Routes = {
   UserProfile: 'UserProfile',
   SingleDonationItem: 'SingleDonationItem',
   SingleBusinessItem: 'SingleBusinessItem',
+  Payment: 'Payment',
 };

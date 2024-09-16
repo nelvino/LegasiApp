@@ -7,6 +7,7 @@ import SingleBusinessItem from '../screens/SingleBusinessItem/SingleBusinessItem
 import Login from '../screens/Login/Login';
 import Registration from '../screens/Registration/Registration';
 import UserProfile from '../screens/UserProfile/UserProfile';
+import Payment from '../screens/Payment/Payment';
 
 const Stack = createStackNavigator();
 
@@ -36,6 +37,7 @@ export const Authenticated = () => {
         name={Routes.SingleDonationItem}
         component={SingleDonationItem}
       />
+      <Stack.Screen name={Routes.Payment} component={Payment} />
     </Stack.Navigator>
   );
 };

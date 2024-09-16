@@ -38,7 +38,7 @@ const style = StyleSheet.create({
     marginHorizontal: horizontalScale(4),
   },
   activeDot: {
-    backgroundColor: '#156CF7',
+    backgroundColor: '#9EC8BE',
   },
   inactiveDot: {
     backgroundColor: '#C4C4C4',
@@ -57,6 +57,41 @@ const style = StyleSheet.create({
   infoText: {
     fontSize: scaleFontSize(16),
     marginVertical: verticalScale(8),
+  },
+  label: {
+    fontFamily: 'Inter',
+    fontWeight: '600',
+    fontSize: scaleFontSize(14),
+    color: '#333',
+    marginBottom: verticalScale(5),
+    marginTop: verticalScale(5),
+  },
+  card: {
+    backgroundColor: '#f9f9f9',
+    padding: verticalScale(10),
+    borderRadius: horizontalScale(10),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    marginBottom: verticalScale(10),
+  },
+  businessName: {
+    fontSize: scaleFontSize(16),
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  businessDescription: {
+    fontSize: scaleFontSize(14),
+    color: '#555',
+    lineHeight: verticalScale(20),
+  },
+  address: {
+    fontSize: scaleFontSize(14),
+    color: '#555',
   },
 });
 

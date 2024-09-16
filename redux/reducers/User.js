@@ -4,8 +4,7 @@ import {createSlice} from '@reduxjs/toolkit';
 // Defining the initial state for the user slice of the store
 const initialState = {
   isLoggedIn: false,
-  profileImage:
-    'https://cdn.dribbble.com/users/1577045/screenshots/4914645/media/028d394ffb00cb7a4b2ef9915a384fd9.png?compress=1&resize=400x300&vertical=top',
+  profileImage: require('../../assets/images/legasi_logo_naranja.png'),
   role: '',
   profile: {},
 };
@@ -22,6 +21,8 @@ export const User = createSlice({
           isLoggedIn: true,
           role: action.payload.role,
           profile: action.payload.profile,
+          profileImage:
+          action.payload.profileImage || require('../../assets/images/legasi_logo_naranja.png'),
         },
         ...action.payload,
       };

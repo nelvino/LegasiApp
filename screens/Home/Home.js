@@ -24,7 +24,7 @@ import SingleBusinessItem from '../../components/SingleBusinessItem/SingleBusine
 import {resetToInitialState} from '../../redux/reducers/User';
 import {logOut} from '../../api/user';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faSignOutAlt} from '@fortawesome/free-solid-svg-icons';
+import {faSignOutAlt, faUser} from '@fortawesome/free-solid-svg-icons';
 import globalStyle from '../../assets/styles/globalStyle';
 import style from './style';
 
@@ -44,12 +44,31 @@ const Home = ({navigation}) => {
 
   useEffect(() => {
     const getBusinesses = async () => {
-      const fetchedBusinesses = await fetchBusinesses();
-      console.log('Fetched Businesses:', fetchedBusinesses);
-      dispatch(setBusinesses(fetchedBusinesses));
+      try {
+        const fetchedBusinesses = await fetchBusinesses();
+        console.log('Fetched Businesses:', fetchedBusinesses);
+        dispatch(setBusinesses(fetchedBusinesses));
+      } catch (error) {
+        console.error('Error fetching businesses:', error);
+      }
     };
     getBusinesses();
   }, [dispatch]);
+
+  useEffect(() => {
+    // Update filtered businesses whenever businesses or selected industry changes
+    if (businesses) {
+      const updatedFilteredBusinesses = businesses.filter(
+        business =>
+          industries.selectedIndustryId === 0 || // "All" option selected
+          business.industry ===
+            industries.industries.find(
+              ind => ind.industryId === industries.selectedIndustryId,
+            )?.name,
+      );
+      setFilteredBusinesses(updatedFilteredBusinesses);
+    }
+  }, [businesses, industries.selectedIndustryId, industries.industries]);
 
   useEffect(() => {
     const getIndustries = async () => {
@@ -83,7 +102,7 @@ const Home = ({navigation}) => {
       }
       setIsLoadingIndustries(false);
     }
-  }, [industries.industries, industryPage]);
+  }, [industries.industries, industryPage, isLoadingIndustries]);
 
   useEffect(() => {
     // Update filtered businesses whenever businesses or selected industry changes
@@ -97,7 +116,7 @@ const Home = ({navigation}) => {
             )?.name,
       ),
     );
-  }, [businesses, industries.selectedIndustryId]);
+  }, [businesses, industries.selectedIndustryId, industries.industries]);
 
   const pagination = (items, pageNumber, pageSize) => {
     const startIndex = (pageNumber - 1) * pageSize;
@@ -128,7 +147,11 @@ const Home = ({navigation}) => {
     }
   };
 
-  const userName = user.profile.displayName || user.profile.userName || user.displayName || 'User';
+  const userName =
+    user.profile.displayName ||
+    user.profile.userName ||
+    user.displayName ||
+    'User';
 
   return (
     <SafeAreaView style={[globalStyle.backgroundWhite, globalStyle.flex]}>
@@ -145,11 +168,12 @@ const Home = ({navigation}) => {
               onPress={() => {
                 navigation.navigate(Routes.UserProfile, {uid: user.uid});
               }}>
-              <Image
+                <FontAwesomeIcon icon={faUser} size={24} color="#9EC8BE" style={style.profileImage} />
+              {/* <Image
                 source={{uri: user.profileImage}}
                 style={style.profileImage}
                 resizeMode={'contain'}
-              />
+              /> */}
             </Pressable>
             <Pressable
               onPress={async () => {
@@ -157,7 +181,7 @@ const Home = ({navigation}) => {
                 await logOut();
               }}
               style={style.logoutIcon}>
-              <FontAwesomeIcon icon={faSignOutAlt} size={24} color="#156CF7" />
+              <FontAwesomeIcon icon={faSignOutAlt} size={24} color="#E37336" />
             </Pressable>
           </View>
         </View>

@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {SafeAreaView, ScrollView, Pressable, View, Text} from 'react-native';
+import {
+  SafeAreaView,
+  ScrollView,
+  Pressable,
+  View,
+  Text,
+  Image,
+} from 'react-native';
 import Input from '../../components/Input/Input';
 import Header from '../../components/Header/Header';
 import Button from '../../components/Button/Button';
@@ -23,6 +30,14 @@ const Login = ({navigation}) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={style.container}>
+        {/* Add the logo */}
+        <View style={style.logoContainer}>
+          <Image
+            source={require('../../assets/images/legasi_logo_naranja.png')}
+            style={style.logo}
+          />
+        </View>
+
         <View style={globalStyle.marginBottom24}>
           <Header type={1} title={'Welcome Back'} />
         </View>
@@ -62,7 +77,7 @@ const Login = ({navigation}) => {
         <Pressable
           style={style.registrationButton}
           onPress={() => navigation.navigate(Routes.Registration)}>
-          <Header color={'#156CF7'} type={3} title={"Don't have an account?"} />
+          <Header color={'#9EC8BE'} type={3} title={"Don't have an account?"} />
         </Pressable>
       </ScrollView>
     </SafeAreaView>
